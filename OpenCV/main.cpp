@@ -3,13 +3,13 @@
 
 constexpr auto winName = "shock_filter";
 
-void gradient_norm(const cv::Mat& aInput, cv::Mat& aOutput) {
-  cv::Mat gx, gy;
-  cv::Sobel(aInput, gx, aInput.depth(), 1, 0);
-  cv::Sobel(aInput, gy, aInput.depth(), 0, 1);
-  cv::multiply(gx, gx, gx);
-  cv::multiply(gy, gy, gy);
-  cv::sqrt(gx + gy, aOutput);
+void gradient_norm(const cv::Mat& aInput, cv::Mat& aOutput, cv::Mat& aGx,
+                   cv::Mat& aGy) {
+  cv::Sobel(aInput, aGx, aInput.depth(), 1, 0);
+  cv::Sobel(aInput, aGy, aInput.depth(), 0, 1);
+  cv::multiply(aGx, aGx, aGx);
+  cv::multiply(aGy, aGy, aGy);
+  cv::sqrt(aGx + aGy, aOutput);
 }
 
 int main(int argc, char** argv) {
@@ -37,12 +37,17 @@ int main(int argc, char** argv) {
   const int steps = 30;
   const float stepSize = 0.25;
   const int maskSize = 9;
+
+  // Buffer images
+  cv::Mat gx;
+  cv::Mat gy;
+
   for (int i = 0; i < steps; i++) {
     cv::GaussianBlur(filtered, filtered, cv::Size(maskSize, maskSize), 0);
     cv::Mat lapl;
     cv::Laplacian(filtered, lapl, filtered.depth());
     cv::Mat grad;
-    gradient_norm(filtered, grad);
+    gradient_norm(filtered, grad, gx, gx);
     cv::Mat3f mask(filtered.size());
     mask = 0;
     mask.setTo(-1, lapl < 0);
