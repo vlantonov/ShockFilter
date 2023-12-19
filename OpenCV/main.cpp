@@ -41,13 +41,13 @@ int main(int argc, char** argv) {
   // Buffer images
   cv::Mat gx;
   cv::Mat gy;
+  cv::Mat lapl;
+  cv::Mat grad;
 
   for (int i = 0; i < steps; i++) {
     cv::GaussianBlur(filtered, filtered, cv::Size(maskSize, maskSize), 0);
-    cv::Mat lapl;
     cv::Laplacian(filtered, lapl, filtered.depth());
-    cv::Mat grad;
-    gradient_norm(filtered, grad, gx, gx);
+    gradient_norm(filtered, grad, gx, gy);
     cv::Mat3f mask(filtered.size());
     mask = 0;
     mask.setTo(-1, lapl < 0);
