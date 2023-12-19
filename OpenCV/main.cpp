@@ -39,16 +39,17 @@ int main(int argc, char** argv) {
   const int maskSize = 9;
 
   // Buffer images
-  cv::Mat gx;
-  cv::Mat gy;
-  cv::Mat lapl;
-  cv::Mat grad;
+  cv::Mat gx(filtered.size(), filtered.type());
+  cv::Mat gy(filtered.size(), filtered.type());
+  cv::Mat lapl(filtered.size(), filtered.type());
+  cv::Mat grad(filtered.size(), filtered.type());
+  cv::Mat3f mask(filtered.size());
 
   for (int i = 0; i < steps; i++) {
     cv::GaussianBlur(filtered, filtered, cv::Size(maskSize, maskSize), 0);
     cv::Laplacian(filtered, lapl, filtered.depth());
     gradient_norm(filtered, grad, gx, gy);
-    cv::Mat3f mask(filtered.size());
+
     mask = 0;
     mask.setTo(-1, lapl < 0);
     mask.setTo(1, lapl > 0);
