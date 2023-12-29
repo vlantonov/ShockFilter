@@ -5,8 +5,8 @@ constexpr auto winName = "shock_filter";
 
 void gradient_norm(const cv::Mat& aInput, cv::Mat& aOutput, cv::Mat& aGx,
                    cv::Mat& aGy) {
-  cv::Sobel(aInput, aGx, aInput.depth(), 1, 0);
-  cv::Sobel(aInput, aGy, aInput.depth(), 0, 1);
+  cv::Scharr(aInput, aGx, aInput.depth(), 1, 0);
+  cv::Scharr(aInput, aGy, aInput.depth(), 0, 1);
   cv::multiply(aGx, aGx, aGx);
   cv::multiply(aGy, aGy, aGy);
   cv::sqrt(aGx + aGy, aOutput);
